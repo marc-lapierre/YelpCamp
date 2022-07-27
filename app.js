@@ -2,6 +2,8 @@ const express = require('express')
 const path = require('path')
 const mongoose = require('mongoose')
 const ejsMate = require('ejs-mate')
+const session = require('express-session')
+const flash = require('connect-flash')
 const Joi = require('joi')
 const { campgroundSchema, reviewSchema } = require('./schemas.js')
 const catchAsync = require('./utilities/catchAsync')
@@ -18,7 +20,8 @@ mongoose.connect('mongodb://localhost:27017/yelp-camp')
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
 db.once('open', () => {
-    console.log('Database connected')
+
+    console.log('\x1b[30m',  '\x1b[42m', 'MongoDB: Connected', '\x1b[0m');
 })
 
 const app = express()
@@ -29,6 +32,21 @@ app.set('views', path.join(__dirname, 'views'))
 
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
+app.use(express.static(path.join(__dirname, 'public')))
+
+const sessionConfig = {
+    secret: 'notsafe',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        httpOnly: true, // https://owasp.org/www-community/HttpOnly
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+        maxAge: 1000 * 60 * 60 * 24 * 7    
+    }
+}
+
+app.use(session(sessionConfig))
+app.use(flash())
 
 app.use('/campgrounds', campgrounds)
 app.use('/campgrounds/:id/reviews', reviews)
@@ -48,5 +66,5 @@ app.use((err, req, res, next) => {
 })
 
 app.listen(3000, () => {
-    console.log('Serving on port 3000')
+    console.log('\x1b[37m', 'Server running on port 3000', '\x1b[0m')
 })
