@@ -1,24 +1,22 @@
+if (process.env.NODE_ENV !== "production") {
+    require('dotenv').config()
+}
+
+
 const express = require('express')
 const path = require('path')
 const mongoose = require('mongoose')
 const ejsMate = require('ejs-mate')
 const session = require('express-session')
 const flash = require('connect-flash')
-// const Joi = require('joi')
-// const { campgroundSchema, reviewSchema } = require('./schemas.js')
-// const catchAsync = require('./utilities/catchAsync')
 const ExpressError = require('./utilities/ExpressError')
 const methodOverride = require('method-override')
-// const Campground = require('./models/campground')
-// const Review = require('./models/review')
 const passport = require('passport')
 const localStrategy = require('passport-local')
 const User = require('./models/user')
-
 const userRoutes = require('./routes/users')
 const campgroundRoutes = require('./routes/campgrounds')
-const reviewRoutes = require('./routes/reviews')
-
+const reviewRoutes = require('./routes/reviews') 
 const { application } = require('express')
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp')
